@@ -1,0 +1,76 @@
+import java.io.*;
+import java.util.*;
+
+public class Main {
+    static class Edge {
+        int src;
+        int nbr;
+        int wt;
+
+        Edge(int src, int nbr, int wt) {
+            this.src = src;
+            this.nbr = nbr;
+            this.wt = wt;
+        }
+    }
+    static int gmin = Integer.MAX_VALUE;
+    static String gpath= "";
+
+
+    public static void TSP_Backtracking(int src , ArrayList < Edge > [] graph, boolean[] visited, int cost, String path) {
+        
+            visited[src] = true;
+            boolean is_bool = true;
+            for (int i = 0; i < visited.length; i++) {
+                if (visited[i] == false) {
+                    is_bool = false;
+                }
+            }
+            if (is_bool == true) {
+                if(cost<gmin){
+                    gmin = cost;
+                    path = path+src;
+                    gpath=path;
+                    return;
+                }
+            }
+            
+        
+        
+        for (int e = 0; e < graph[src].size(); e++) {
+            Edge ce = graph[src].get(e);
+
+            if (visited[ce.nbr] == false) {
+                TSP_Backtracking(ce.nbr, graph, visited, cost + ce.wt, path + ce.src);
+
+            }
+        }
+        visited[src] = false;
+        return;
+    }
+    public static void main(String[] args) throws Exception {
+        BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
+
+        int vtces = Integer.parseInt(br.readLine());
+        ArrayList < Edge > [] graph = new ArrayList[vtces];
+        for (int i = 0; i < vtces; i++) {
+            graph[i] = new ArrayList < > ();
+        }
+
+        int edges = Integer.parseInt(br.readLine());
+        for (int i = 0; i < edges; i++) {
+            String[] parts = br.readLine().split(" ");
+            int v1 = Integer.parseInt(parts[0]);
+            int v2 = Integer.parseInt(parts[1]);
+            int wt = Integer.parseInt(parts[2]);
+            graph[v1].add(new Edge(v1, v2, wt));
+            graph[v2].add(new Edge(v2, v1, wt));
+        }
+
+        int src = Integer.parseInt(br.readLine()); 
+      
+        boolean[] visited = new boolean[vtces];
+        TSP_Backtracking(src, graph, visited, 0, "");
+        System.out.println(gmin);
+        System.out.println(gpath);
+    }
